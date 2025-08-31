@@ -1,0 +1,383 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1tYR8hAhR-XW5sxC0MzpvTHa6iy_4qtiv",
+          "mode": "id"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -72
+      ],
+      "id": "9cc94f7d-68fc-4046-a99d-ff13c8739098",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "LPgdi1XB3mCKAuqr",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1xYHw5ba-6Aq8G82C3YzY2soydIJeqTiH",
+          "mode": "list",
+          "cachedResultName": "Nhlapo Nkululeko_AI Engineer-190602.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1xYHw5ba-6Aq8G82C3YzY2soydIJeqTiH/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        224,
+        -72
+      ],
+      "id": "1fac52a5-9a70-4da6-98bd-239d1d84b149",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "LPgdi1XB3mCKAuqr",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -72
+      ],
+      "id": "c38f5be2-4b5f-4223-92d8-235db611fc62",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "cv-portfolio",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        -176
+      ],
+      "id": "d8b5bb08-270a-49b2-8adc-5be6568a4211",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "AoImCf4E17GQtwjp",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-ada-002",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        48
+      ],
+      "id": "5f26297a-0334-40c8-b47d-886de033a40a",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "9iVqKCFb6lvoVhp0",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        808,
+        48
+      ],
+      "id": "8c5e4607-3033-43b5-967c-a24991f3b522",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are Nhlapo Nkululeko Villicent speaking directly about your own professional background. You have access to your complete CV database through a search tool.\n\nCRITICAL SEARCH-ONLY PROTOCOL:\n- You MUST search your database for EVERY question about your background\n- You are FORBIDDEN from using any assumed knowledge about yourself\n- NEVER provide information that doesn't come directly from your CV search results\n- If search returns no results, state that clearly - do not fill gaps with assumptions\n\nMANDATORY SEARCH BEHAVIOR:\n- Search FIRST, answer SECOND - no exceptions\n- Base 100% of your response on retrieved CV data only\n- Quote specific details from search results when possible\n- If search finds partial information, only share what was found\n- If search finds no information, respond: \"I could not find that information in my CV database\"\n\nFORBIDDEN RESPONSES:\n- Never say \"Based on my background\" without searching your CV first\n- Never reference general knowledge about any profession or industry\n- Never make educated guesses or assumptions about your own experience\n- Never combine search results with external knowledge\n- Never say \"typically\" or \"generally\" - only report your specific findings\n\nRESPONSE FORMAT:\nAlways start responses with: \"According to my CV:\" or \"My records show:\" or \"I found in my background:\"\n\nSEARCH STRATEGY:\nFor any question about yourself, search using multiple relevant keywords:\n- Education questions: Search \"university\", \"college\", \"degree\", \"education\", \"studied\"\n- Job questions: Search \"job\", \"work\", \"position\", \"role\", \"employer\", \"company\"\n- Technical questions: Search \"programming\", \"technical\", \"tools\", \"software\"\n- Location questions: Search \"location\", \"address\", \"city\", \"contact\"\n\nSpeak as yourself (using \"I\", \"my\", \"me\") but only share information found in your CV database through searches."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        80
+      ],
+      "id": "a0e8a4d4-595d-47d3-a37c-495940f6f507",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-3-5-haiku-20241022",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 3.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1024,
+        300
+      ],
+      "id": "2cee1385-5e2f-485d-bbe5-17ffe49dd288",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "2do0PfqO3nyyNLuG",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search comprehensive CV database containing Nhlapo Nkululeko Villicent's complete professional profile including current employment at PSG Western National Insurance as Data Graduate Trainee, educational background in Computer Science, technical skills in Python/SQL/SAS/Power BI, work experience in data analysis and machine learning, location in Bellville Cape Town, and detailed qualifications for data science roles",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "cv-portfolio",
+          "mode": "list",
+          "cachedResultName": "cv-portfolio"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1280,
+        300
+      ],
+      "id": "3a326c4b-ba8b-47c0-aaa4-76b4aa6149b1",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "AoImCf4E17GQtwjp",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        508
+      ],
+      "id": "dfd754c8-1bcf-4859-b33a-f76017288e63",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "9iVqKCFb6lvoVhp0",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1152,
+        336
+      ],
+      "id": "24ffcd73-2bb3-413c-b194-80f44d9020ff",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        256
+      ],
+      "id": "38989840-9d2e-4b2e-861d-cfec05425300",
+      "name": "When chat message received",
+      "webhookId": "30518bf7-b444-44a1-a5c7-ddbc08dd5788"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "96a57437-c067-4d9c-a5ff-dd7e622f4661",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bd8530c23cefd901ca0c2e92b1d0b97feb477dded4e7d3d5baf4d1eefc2391c0"
+  },
+  "id": "D4xjhaoXvO29Xm3o",
+  "tags": []
+}
